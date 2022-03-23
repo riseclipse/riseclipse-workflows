@@ -8,11 +8,14 @@ on:
       build-path:
         required: true
         type: string
+      status:
+        required: true
+        type: string
 
 jobs:
   on-failure:
     runs-on: ubuntu-latest
-    if: ${{ github.event.workflow_run.conclusion == 'failure' }}
+    if: ${{ inputs.status }}
 
     steps:
       - name: Checkout ${{ github.event.repository.name }}
