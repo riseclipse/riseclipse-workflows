@@ -15,7 +15,6 @@ jobs:
     if: ${{ github.event.workflow_run.conclusion == 'failure' }}
 
     steps:
-    # Get artefacts and version
       - name: Checkout ${{ github.event.repository.name }}
         uses: actions/checkout@v2
         with:
@@ -28,7 +27,7 @@ jobs:
           echo ::set-output name=project_version::$(mvn -q -Dexec.executable=echo -Dexec.args='${project.version}' --non-recursive exec:exec)
         id: get_version
 
-      - name: delete branch if created
+      - name: Delete branch if created
         uses: dawidd6/action-delete-branch@v3
         with:
           github_token: ${{github.token}}
