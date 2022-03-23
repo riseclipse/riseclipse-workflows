@@ -7,7 +7,7 @@ name: Release on OSSRH and Maven Central
 on:
   workflow_call:
     inputs:
-      buildPath:
+      build-path:
         required: true
         type: string
 
@@ -25,5 +25,5 @@ jobs:
 
     - name: Perform Maven Release
       run: |
-        cd ${{ github.event.repository.name }}/${{ input.buildPath }}
+        cd ${{ github.event.repository.name }}/${{ inputs.build-path }}
         mvn release:perform
