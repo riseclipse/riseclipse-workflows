@@ -1,0 +1,29 @@
+name: Release on OSSRH and Maven Central
+
+# This CD workflow releases packages to OSSRH Nexus repository and to Maven Central
+# It only runs on MASTER branch AFTER Build and Test Workflow is completed AND if commit is tagged (which is done when merging)
+# NOTE: Maven central needs aproval in Nexus OSSRH before being released
+
+on:
+  workflow_call:
+    inputs:
+      build-path:
+        required: true
+        type: string
+
+jobs:
+  publish_release:
+    runs-on: ubuntu-latest
+    name: Publish Release on OSSRH / Maven Central
+
+    steps: 
+    - name: Checkout ${{ github.event.repository.name }}
+      uses: actions/checkout@v2
+      with:
+        path: ${{ github.event.repository.name }}
+        ref: master
+
+    - name: Perform Maven Release
+      run: |
+        cd ${{ github.event.repository.name }}/${{ input.build-path }}
+        mvn release:perform
