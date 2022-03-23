@@ -5,7 +5,7 @@ name: Rollback Failure
 on:
   workflow_call:
     inputs:
-      build-path:
+      buildPath:
         required: true
         type: string
 
@@ -24,7 +24,7 @@ jobs:
 
       - name: Extract Maven project version
         run: |
-          cd ${{ github.event.repository.name }}/${{ input.build-path }}
+          cd ${{ github.event.repository.name }}/${{ input.buildPath }}
           echo ::set-output name=project_version::$(mvn -q -Dexec.executable=echo -Dexec.args='${project.version}' --non-recursive exec:exec)
         id: get_version
 
