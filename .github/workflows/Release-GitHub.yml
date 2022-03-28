@@ -5,7 +5,6 @@ name: Release on GitHub
 
 on: workflow_call
 
-
 jobs:
   publish_release:
     runs-on: ubuntu-latest
@@ -16,7 +15,7 @@ jobs:
       uses: actions/checkout@v2
       with:
         path: ${{ github.event.repository.name }}
-        ref: master
+        ref: ${{ github.ref_name }}
 
     - name: Extract Maven project version
       run: |

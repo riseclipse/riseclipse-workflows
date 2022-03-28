@@ -8,21 +8,17 @@ on:
       build-path:
         required: true
         type: string
-      status:
-        required: true
-        type: string
 
 jobs:
   on-failure:
     runs-on: ubuntu-latest
-    if: ${{ inputs.status }}
 
     steps:
       - name: Checkout ${{ github.event.repository.name }}
         uses: actions/checkout@v2
         with:
           path: ${{ github.event.repository.name }}
-          ref: master
+          ref: ${{ github.ref_name }}
 
       - name: Extract Maven project version
         run: |
