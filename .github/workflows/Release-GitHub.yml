@@ -22,14 +22,6 @@ jobs:
         cd ${{ github.event.repository.name }}
         echo ::set-output name=project_version::$(mvn -q -Dexec.executable=echo -Dexec.args='${project.version}' --non-recursive exec:exec)
       id: get_version
-        
-    # Create new branch and release with artifacts
-    - name: Create Release branch
-      uses: peterjgrainger/action-create-branch@v2.0.1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        branch: 'release/v${{ steps.get_version.outputs.project_version }}'
 
     - name: Create Release
       id: create_release
@@ -40,5 +32,5 @@ jobs:
         tag_name: v${{ steps.get_version.outputs.project_version }}
         release_name: RiseClipse ${{ steps.get_version.outputs.project_version }}
         body: This RiseClipse release contains the latest changes available. You can learn more by reading the documentation. Release is created automatically by GH Actions
-        draft: false
+        draft: true # Until PR is approved
         prerelease: false

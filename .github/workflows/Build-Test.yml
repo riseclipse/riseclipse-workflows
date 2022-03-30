@@ -10,6 +10,15 @@ on:
       build-path:
         required: true
         type: string
+    secrets:
+      RISECLIPSE_PGP_KEY_PRIVATE:
+        required: true
+      RISECLIPSE_PGP_KEY_PASSWORD:
+        required: true
+      RISECLIPSE_OSSRH_USERNAME:
+        required: true
+      RISECLIPSE_OSSRH_PASSWORD:
+        required: true
       
 jobs:
   build:
@@ -25,12 +34,17 @@ jobs:
         path: ${{ github.event.repository.name }}
         ref: ${{ github.ref_name }}
 
-    - name: Set up JDK 11
+    - name: Setup Environment
       uses: actions/setup-java@v2
       with:
+        distribution: 'temurin'
         java-version: '11'
-        distribution: 'adopt'
-        cache: maven
+        cache: 'maven'
+        server-id: ossrh # Value of the distributionManagement/repository/id field of the pom.xml
+        server-username: MAVEN_USERNAME
+        server-password: MAVEN_PASSWORD
+        gpg-private-key: ${{ secrets.RISECLIPSE_PGP_KEY_PRIVATE }}
+        gpg-passphrase: MAVEN_GPG_PASSPHRASE
 
     - name: Build with Maven 
       run: |
