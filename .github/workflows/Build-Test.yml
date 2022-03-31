@@ -19,6 +19,8 @@ on:
         required: true
       RISECLIPSE_OSSRH_PASSWORD:
         required: true
+      SONAR_TOKEN:
+        required: true
       
 jobs:
   build:
@@ -60,6 +62,36 @@ jobs:
     - name: Show extracted Maven project version
       run: echo ${{ steps.get_version.outputs.project_version }}
 
+  quality:
+    name: Build Analyse code with SonarqubeProject
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout ${{ github.event.repository.name }}
+        uses: actions/checkout@v2
+        with:
+          path: ${{ github.event.repository.name }}
+          ref: ${{ github.ref_name }}
+
+      - name: Setup Environment
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'temurin'
+          java-version: '11'
+          cache: 'maven'
+          server-id: ossrh # Value of the distributionManagement/repository/id field of the pom.xml
+          server-username: MAVEN_USERNAME
+          server-password: MAVEN_PASSWORD
+          gpg-private-key: ${{ secrets.RISECLIPSE_PGP_KEY_PRIVATE }}
+          gpg-passphrase: MAVEN_GPG_PASSPHRASE
+
+      - name: Run tests with Sonarqube
+        run: |
+          cd ${{ github.event.repository.name }}/${{ inputs.build-path }}
+          mvn verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.organization=riseclipse\
+          -Dsonar.host.url=http://sonarcloud.io -Dsonar.login=${{ secrets.SONAR_TOKEN }}\
+          -Dsonar.projectKey=riseclipse_${{ github.event.repository.name }}
+
   test:
     runs-on: ubuntu-latest
     needs: [build]
@@ -71,5 +103,6 @@ jobs:
       run: | 
         cd ${{ github.event.repository.name }}/${{ inputs.build-path }}
         mvn test
+
 
 # Unit tests to be implemented here
